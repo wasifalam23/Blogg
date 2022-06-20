@@ -7,7 +7,7 @@ const DB = process.env.DATABASE.replace(
 );
 
 mongoose.connect(DB).then(() => {
-  console.log('Database connection successful...');
+  console.log('Database connection successful ☑️');
 });
 
 const port = process.env.PORT || 8000;
