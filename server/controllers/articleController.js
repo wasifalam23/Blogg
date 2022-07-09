@@ -30,7 +30,11 @@ exports.getArticle = catchAsync(async (req, res, next) => {
 });
 
 exports.createArticle = catchAsync(async (req, res, next) => {
-  const newArticle = await Article.create(req.body);
+  const newArticle = await Article.create({
+    title: req.body.title,
+    description: req.body.description,
+    author: req.user.id,
+  });
 
   res.status(201).json({
     status: 'success',
@@ -59,7 +63,11 @@ exports.updateArticle = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteArticle = catchAsync(async (req, res, next) => {
+  const loggedInUserId = req.user.id;
+
   const article = await Article.findByIdAndDelete(req.params.id);
+
+  console.log(loggedInUserId, article.author.id);
 
   if (!article) {
     return next(new AppError('No Article found with that ID', 404));

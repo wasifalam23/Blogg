@@ -6,13 +6,13 @@ const router = express.Router();
 
 router
   .route('/')
-  .get(authController.protect, articleController.getAllArticles)
-  .post(articleController.createArticle);
+  .get(articleController.getAllArticles)
+  .post(authController.protect, articleController.createArticle);
 
 router
   .route('/:id')
   .get(articleController.getArticle)
-  .patch(articleController.updateArticle)
-  .delete(articleController.deleteArticle);
+  .patch(authController.protect, articleController.updateArticle)
+  .delete(authController.protect, articleController.deleteArticle);
 
 module.exports = router;
