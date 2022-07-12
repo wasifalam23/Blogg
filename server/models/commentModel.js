@@ -25,7 +25,11 @@ const commentSchema = new mongoose.Schema({
 });
 
 commentSchema.pre(/^find/, function (next) {
-  this.populate({ path: 'user', select: '-email -__v -article ' });
+  this.populate({
+    path: 'user',
+    select: '-email -__v',
+  });
+
   next();
 });
 

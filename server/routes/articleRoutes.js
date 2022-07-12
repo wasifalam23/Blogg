@@ -9,6 +9,12 @@ router
   .get(articleController.getAllArticles)
   .post(authController.protect, articleController.createArticle);
 
+router.get(
+  '/getAllMyArticles',
+  authController.protect,
+  articleController.getMyArticles
+);
+
 router
   .route('/:id')
   .get(articleController.getArticle)

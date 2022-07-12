@@ -36,6 +36,7 @@ articleSchema.virtual('comments', {
 articleSchema.pre(/^find/, function (next) {
   this.populate({ path: 'author', select: '-__v -email' }).populate({
     path: 'comments',
+    select: '-__v',
   });
   next();
 });
