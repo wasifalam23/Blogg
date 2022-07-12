@@ -43,6 +43,8 @@ exports.getAllComments = catchAsync(async (req, res, next) => {
 });
 
 exports.createComment = catchAsync(async (req, res, next) => {
+  if (!req.body.article) req.body.article = req.params.articleId;
+
   const comment = await Comment.create({
     comment: req.body.comment,
     article: req.body.article,
