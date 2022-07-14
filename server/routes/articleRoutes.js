@@ -21,7 +21,12 @@ router.get(
 router
   .route('/:id')
   .get(articleController.getArticle)
-  .patch(authController.protect, articleController.updateArticle)
+  .patch(
+    authController.protect,
+    articleController.uploadArticlePhoto,
+    articleController.resizeArticlePhoto,
+    articleController.updateArticle
+  )
   .delete(authController.protect, articleController.deleteArticle);
 
 module.exports = router;

@@ -1,6 +1,40 @@
+const multer = require('multer');
+const sharp = require('sharp');
 const Article = require('../models/articleModel');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
+
+const multerStorage = multer.memoryStorage();
+
+const multerFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('image')) {
+    cb(null, true);
+  } else {
+    cb(new AppError('Not an image! Please upload only images', 400), false);
+  }
+};
+
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter,
+});
+
+exports.uploadArticlePhoto = upload.single('photo');
+
+exports.resizeArticlePhoto = catchAsync(async (req, res, next) => {
+  if (!req.file) return next();
+
+  console.log(req.file.filename);
+  req.file.filename = `article-${req.params.id}-${Date.now()}.jpeg`;
+
+  await sharp(req.file.buffer)
+    .resize(2000, 1333)
+    .toFormat('jpeg')
+    .jpeg({ quality: 90 })
+    .toFile(`uploads/images/articles/${req.file.filename}`);
+
+  next();
+});
 
 const checkPermission = catchAsync(async (loggedInUserId, articleId, next) => {
   const article = await Article.findById(articleId);
@@ -77,10 +111,18 @@ exports.createArticle = catchAsync(async (req, res, next) => {
 exports.updateArticle = catchAsync(async (req, res, next) => {
   const article = await checkPermission(req.user.id, req.params.id, next);
 
-  const updatedArticle = await Article.findByIdAndUpdate(article.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
+  const updatedArticle = await Article.findByIdAndUpdate(
+    article.id,
+    {
+      title: req.body.title,
+      description: req.body.description,
+      photo: req.file.filename,
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
 
   res.status(200).json({
     status: 'success',
