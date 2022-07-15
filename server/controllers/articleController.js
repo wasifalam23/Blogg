@@ -24,7 +24,6 @@ exports.uploadArticlePhoto = upload.single('photo');
 exports.resizeArticlePhoto = catchAsync(async (req, res, next) => {
   if (!req.file) return next();
 
-  console.log(req.file.filename);
   req.file.filename = `article-${req.params.id}-${Date.now()}.jpeg`;
 
   await sharp(req.file.buffer)
