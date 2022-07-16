@@ -19,12 +19,14 @@ const upload = multer({
   fileFilter: multerFilter,
 });
 
-exports.uploadArticlePhoto = upload.single('photo');
+exports.uploadArticlePhoto = upload.single('image');
 
 exports.resizeArticlePhoto = catchAsync(async (req, res, next) => {
   if (!req.file) return next();
 
-  req.file.filename = `article-${req.params.id}-${Date.now()}.jpeg`;
+  req.file.filename = `article-${
+    req.method === 'PATCH' ? req.params.id : req.user.id
+  }-${Date.now()}.jpeg`;
 
   await sharp(req.file.buffer)
     .resize(2000, 1333)
@@ -93,9 +95,12 @@ exports.getMyArticles = catchAsync(async (req, res, next) => {
 });
 
 exports.createArticle = catchAsync(async (req, res, next) => {
+  const image = req.file ? req.file.filename : undefined;
+
   const newArticle = await Article.create({
     title: req.body.title,
     description: req.body.description,
+    image,
     author: req.user.id,
   });
 
@@ -115,7 +120,7 @@ exports.updateArticle = catchAsync(async (req, res, next) => {
     {
       title: req.body.title,
       description: req.body.description,
-      photo: req.file.filename,
+      image: req.file.filename,
     },
     {
       new: true,

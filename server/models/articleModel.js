@@ -4,15 +4,18 @@ const articleSchema = new mongoose.Schema(
   {
     title: {
       type: String,
-      required: [true, 'An article must have a title'],
+      required: [true, 'An article must have a title.'],
     },
 
     description: {
       type: String,
-      required: [true, 'An article must have some description'],
+      required: [true, 'An article must have some description.'],
     },
 
-    photo: String,
+    image: {
+      type: String,
+      required: [true, 'An article must have some kind of image.'],
+    },
 
     author: {
       type: mongoose.Schema.Types.ObjectId,

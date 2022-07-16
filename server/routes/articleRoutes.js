@@ -10,7 +10,12 @@ router.use('/:articleId/comments', commentRoutes);
 router
   .route('/')
   .get(articleController.getAllArticles)
-  .post(authController.protect, articleController.createArticle);
+  .post(
+    authController.protect,
+    articleController.uploadArticlePhoto,
+    articleController.resizeArticlePhoto,
+    articleController.createArticle
+  );
 
 router.get(
   '/getAllMyArticles',

@@ -1,3 +1,4 @@
+const fs = require('fs');
 const AppError = require('../utils/appError');
 
 const handleCastErrorDB = (err) => {
@@ -60,9 +61,16 @@ module.exports = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
 
-  if (process.env.NODE_ENV === 'development') {
-    console.log(err.name);
+  if (req.file) {
+    fs.unlink(
+      `${__dirname}/../uploads/images/articles/${req.file.filename}`,
+      () => {
+        console.log(`Deleted: ${req.file.filename}`);
+      }
+    );
+  }
 
+  if (process.env.NODE_ENV === 'development') {
     sendErrorDev(err, res);
   } else if (process.env.NODE_ENV === 'production') {
     let error = JSON.parse(JSON.stringify(err));
