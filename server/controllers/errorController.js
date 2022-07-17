@@ -47,8 +47,8 @@ const sendErrorProd = (err, res) => {
     // Programming or unknown error: Don't leak details to the client
   } else {
     // 1) Log error
+    console.log('ERROR 💥', err);
 
-    // console.log('ERROR 💥', err);
     // 2) Send generic message to the client
     res.status(500).json({
       status: 'fail',
@@ -62,12 +62,9 @@ module.exports = (err, req, res, next) => {
   err.status = err.status || 'error';
 
   if (req.file) {
-    fs.unlink(
-      `${__dirname}/../uploads/images/articles/${req.file.filename}`,
-      () => {
-        console.log(`Deleted: ${req.file.filename}`);
-      }
-    );
+    fs.unlink(`${__dirname}/../${req.file.path}`, () => {
+      console.log(`Deleted: ${req.file.filename}`);
+    });
   }
 
   if (process.env.NODE_ENV === 'development') {

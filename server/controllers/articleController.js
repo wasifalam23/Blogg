@@ -28,11 +28,13 @@ exports.resizeArticlePhoto = catchAsync(async (req, res, next) => {
     req.method === 'PATCH' ? req.params.id : req.user.id
   }-${Date.now()}.jpeg`;
 
+  req.file.path = `uploads/images/articles/${req.file.filename}`;
+
   await sharp(req.file.buffer)
     .resize(2000, 1333)
     .toFormat('jpeg')
     .jpeg({ quality: 90 })
-    .toFile(`uploads/images/articles/${req.file.filename}`);
+    .toFile(req.file.path);
 
   next();
 });
